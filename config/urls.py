@@ -3,6 +3,9 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken.views import obtain_auth_token
 
+from django.contrib.auth import views as auth_views  # LOGIN / LOGOUT
+from inventario.views import inicio_view  # VISTA INICIO
+
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularSwaggerView,
@@ -32,7 +35,17 @@ router.register(r'movimientos', MovimientoStockViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    # API REST principal
+    # LOGIN Y LOGOUT
+    path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(template_name='logout.html'), name='logout'),
+
+    # PÁGINA DE INICIO DEL SISTEMA
+    path('', inicio_view, name='inicio'),
+
+    # CRUD VISUAL DEL INVENTARIO (categorías, productos, movimientos)
+    path('', include('inventario.urls')),
+
+    # API REST
     path('api/', include(router.urls)),
 
     # Autenticación por Token
@@ -40,14 +53,6 @@ urlpatterns = [
 
     # Documentación OpenAPI
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    path(
-        'api/schema/swagger-ui/',
-        SpectacularSwaggerView.as_view(url_name='schema'),
-        name='swagger-ui'
-    ),
-    path(
-        'api/schema/redoc/',
-        SpectacularRedocView.as_view(url_name='schema'),
-        name='redoc'
-    ),
+    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]

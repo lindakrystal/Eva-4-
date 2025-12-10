@@ -11,22 +11,24 @@ from .serializers import (
 )
 
 
-# Permiso personalizado: solo admin puede modificar, usuarios normales solo leen
+# ============================================================
+# PERMISOS PERSONALIZADOS
+# ============================================================
 class IsStaffOrReadOnly(permissions.BasePermission):
     """
     Lectura para cualquier usuario autenticado.
     Escritura solo para usuarios staff.
     """
-
     def has_permission(self, request, view):
-        if request.method in permissions.SAFE_METHODS:  # GET, HEAD, OPTIONS
+        if request.method in permissions.SAFE_METHODS:
             return request.user.is_authenticated
         return request.user.is_staff
 
 
-# -------------------------------
-# CATEGORÍAS
-# -------------------------------
+# ============================================================
+# API REST: VIEWSETS
+# ============================================================
+
 class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all()
     serializer_class = CategoriaSerializer
@@ -37,9 +39,6 @@ class CategoriaViewSet(viewsets.ModelViewSet):
     ordering_fields = ['nombre', 'creado_en']
 
 
-# -------------------------------
-# PROVEEDORES
-# -------------------------------
 class ProveedorViewSet(viewsets.ModelViewSet):
     queryset = Proveedor.objects.all()
     serializer_class = ProveedorSerializer
@@ -50,9 +49,6 @@ class ProveedorViewSet(viewsets.ModelViewSet):
     ordering_fields = ['nombre', 'creado_en']
 
 
-# -------------------------------
-# PRODUCTOS
-# -------------------------------
 class ProductoViewSet(viewsets.ModelViewSet):
     queryset = Producto.objects.all()
     serializer_class = ProductoSerializer
@@ -64,23 +60,16 @@ class ProductoViewSet(viewsets.ModelViewSet):
         OrderingFilter
     ]
 
-    # Filtros
     filterset_fields = {
         'categoria': ['exact'],
         'proveedor': ['exact'],
         'activo': ['exact'],
     }
 
-    # Búsquedas
     search_fields = ['nombre', 'sku', 'descripcion']
-
-    # Ordenamientos
     ordering_fields = ['nombre', 'precio', 'stock_actual', 'creado_en']
 
 
-# -------------------------------
-# MOVIMIENTOS DE STOCK
-# -------------------------------
 class MovimientoStockViewSet(viewsets.ModelViewSet):
     queryset = MovimientoStock.objects.select_related('producto').all()
     serializer_class = MovimientoStockSerializer
@@ -89,3 +78,59 @@ class MovimientoStockViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['tipo', 'producto']
     ordering_fields = ['creado_en', 'cantidad']
+
+
+# ============================================================
+# VISTA HTML PRINCIPAL (Dashboard)
+# ============================================================
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+
+
+@login_required
+def inicio_view(request):
+    """Vista principal del sistema."""
+    return render(request, 'inicio.html')
+
+
+# ============================================================
+# CRUD HTML - CATEGORÍAS
+# ============================================================
+
+@login_required
+def categorias_list(request):
+    categorias = Categoria.objects.all()
+    return render(request, 'categorias/list.html', {'categorias': categorias})
+
+
+@login_required
+def categoria_create(request):
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        descripcion = request.POST.get('descripcion')
+
+        if nombre:
+            Categoria.objects.create(nombre=nombre, descripcion=descripcion)
+            return redirect('categorias_list')
+
+    return render(request, 'categorias/create.html')
+
+
+@login_required
+def categoria_edit(request, id):
+    categoria = get_object_or_404(Categoria, id=id)
+
+    if request.method == 'POST':
+        categoria.nombre = request.POST.get('nombre')
+        categoria.descripcion = request.POST.get('descripcion')
+        categoria.save()
+        return redirect('categorias_list')
+
+    return render(request, 'categorias/edit.html', {'categoria': categoria})
+
+
+@login_required
+def categoria_delete(request, id):
+    categoria = get_object_or_404(Categoria, id=id)
+    categoria.delete()
+    return redirect('categorias_list')

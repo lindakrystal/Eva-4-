@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -55,7 +56,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # ← ACTIVA LOS TEMPLATES
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -87,18 +88,10 @@ DATABASES = {
 # CONTRASEÑAS
 # ---------------------------------------------------------
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
 
@@ -106,11 +99,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # INTERNACIONALIZACIÓN
 # ---------------------------------------------------------
 LANGUAGE_CODE = 'es-cl'
-
 TIME_ZONE = 'America/Santiago'
-
 USE_I18N = True
-
 USE_TZ = True
 
 
@@ -144,7 +134,7 @@ REST_FRAMEWORK = {
 
 
 # ---------------------------------------------------------
-# CONFIGURACIÓN SWAGGER / REDOC (drf-spectacular)
+# CONFIGURACIÓN SWAGGER / REDOC
 # ---------------------------------------------------------
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Sistema de Inventario para PYMEs',
@@ -154,6 +144,11 @@ SPECTACULAR_SETTINGS = {
 
 
 # ---------------------------------------------------------
-# POR DEFECTO
+# LOGIN / LOGOUT
 # ---------------------------------------------------------
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'inicio'
+LOGOUT_REDIRECT_URL = 'login'
+
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
