@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2 class="mt-4">Nuevo Movimiento de Stock</h2>
+
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+<form method="POST">
+    {% csrf_token %}
+
+    <div class="mb-3">
+        <label class="form-label">Producto</label>
+        <select name="producto" class="form-control">
+            {% for p in productos %}
+            <option value="{{ p.id }}">{{ p.nombre }} (Stock: {{ p.stock_actual }})</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Tipo</label>
+        <select name="tipo" class="form-control">
+            <option value="ENTRADA">Entrada</option>
+            <option value="SALIDA">Salida</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Cantidad</label>
+        <input type="number" name="cantidad" class="form-control" required>
+    </div>
+
+    <button class="btn btn-success">Registrar</button>
+    <a href="{% url 'movimientos_list' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+
+{% endblock %}

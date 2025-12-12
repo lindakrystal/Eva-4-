@@ -1,44 +1,50 @@
 {% extends 'base.html' %}
-{% block title %}Inicio{% endblock %}
-
 {% block content %}
-
 <div class="container mt-5">
-    <h1 class="mb-4">Bienvenido, {{ user.username }}!</h1>
+    <h1 class="mb-4">Bienvenido, {{ request.user.username }}!</h1>
 
-    <div class="row g-4">
+    <div class="row">
 
-        <!-- Categorías -->
-        <div class="col-md-4">
-            <a href="/admin/inventario/categoria/" class="text-decoration-none">
-                <div class="card shadow-sm p-4 h-100">
-                    <h4 class="mb-2">Categorías</h4>
-                    <p class="text-muted">Administrar categorías del inventario.</p>
+        <!-- CATEGORÍAS -->
+        <div class="col-md-3">
+            <a href="{% url 'categorias_list' %}" class="text-decoration-none text-dark">
+                <div class="card shadow-sm p-4">
+                    <h3>Categorías</h3>
+                    <p>Administrar categorías del inventario.</p>
                 </div>
             </a>
         </div>
 
-        <!-- Productos -->
-        <div class="col-md-4">
-            <a href="/admin/inventario/producto/" class="text-decoration-none">
-                <div class="card shadow-sm p-4 h-100">
-                    <h4 class="mb-2">Productos</h4>
-                    <p class="text-muted">Gestionar productos y detalles.</p>
+        <!-- PRODUCTOS -->
+        <div class="col-md-3">
+            <a href="{% url 'productos_list' %}" class="text-decoration-none text-dark">
+                <div class="card shadow-sm p-4">
+                    <h3>Productos</h3>
+                    <p>Gestionar productos y detalles.</p>
                 </div>
             </a>
         </div>
 
-        <!-- Movimientos -->
-        <div class="col-md-4">
-            <a href="/admin/inventario/movimientostock/" class="text-decoration-none">
-                <div class="card shadow-sm p-4 h-100">
-                    <h4 class="mb-2">Movimientos</h4>
-                    <p class="text-muted">Registrar entradas y salidas de stock.</p>
+        <!-- PROVEEDORES -->
+        <div class="col-md-3">
+            <a href="{% url 'proveedores_list' %}" class="text-decoration-none text-dark">
+                <div class="card shadow-sm p-4">
+                    <h3>Proveedores</h3>
+                    <p>Gestionar proveedores y contactos.</p>
+                </div>
+            </a>
+        </div>
+
+        <!-- MOVIMIENTOS -->
+        <div class="col-md-3">
+            <a href="{% url 'movimientos_list' %}" class="text-decoration-none text-dark">
+                <div class="card shadow-sm p-4">
+                    <h3>Movimientos</h3>
+                    <p>Registrar entradas y salidas de stock.</p>
                 </div>
             </a>
         </div>
 
     </div>
 </div>
-
 {% endblock %}

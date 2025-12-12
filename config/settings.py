@@ -51,12 +51,17 @@ ROOT_URLCONF = 'config.urls'
 
 
 # ---------------------------------------------------------
-# TEMPLATES
+# TEMPLATES (CORREGIDO)
 # ---------------------------------------------------------
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # ← ACTIVA LOS TEMPLATES
+
+        # RUTA CORRECTA A TUS TEMPLATES
+        'DIRS': [
+            BASE_DIR / 'inventario' / 'templates'
+        ],
+
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
