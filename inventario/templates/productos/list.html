@@ -28,12 +28,23 @@
             <td>{{ p.categoria.nombre }}</td>
             <td>{{ p.proveedor.nombre }}</td>
             <td>
-                <a href="{% url 'productos_editar' p.id %}" class="btn btn-warning btn-sm">Editar</a>
-                <a href="{% url 'productos_eliminar' p.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                <a href="{% url 'productos_editar' p.id %}" class="btn btn-warning btn-sm">
+                    Editar
+                </a>
+
+                <form method="post" action="{% url 'productos_eliminar' p.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm"
+                            onclick="return confirm('¿Estás segura de eliminar este producto?');">
+                        Eliminar
+                    </button>
+                </form>
             </td>
         </tr>
         {% empty %}
-        <tr><td colspan="7" class="text-center">No hay productos registrados.</td></tr>
+        <tr>
+            <td colspan="7" class="text-center">No hay productos registrados.</td>
+        </tr>
         {% endfor %}
     </tbody>
 </table>

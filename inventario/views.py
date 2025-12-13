@@ -213,9 +213,9 @@ def productos_editar(request, id):
 
 @login_required
 def productos_eliminar(request, id):
-    get_object_or_404(Producto, id=id).delete()
+    if request.method == 'POST':
+        get_object_or_404(Producto, id=id).delete()
     return redirect('productos_list')
-
 
 # ============================================================
 # CRUD MOVIMIENTOS
