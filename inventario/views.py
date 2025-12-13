@@ -63,16 +63,7 @@ class MovimientoStockViewSet(viewsets.ModelViewSet):
 
 
 # ============================================================
-# REDIRECCIÓN RAÍZ (LOGIN / DASHBOARD)
-# ============================================================
-def root_redirect(request):
-    if request.user.is_authenticated:
-        return redirect('inicio')
-    return redirect('login')
-
-
-# ============================================================
-# LOGOUT (ÚNICO Y DEFINITIVO)
+# LOGOUT
 # ============================================================
 def logout_view(request):
     logout(request)
@@ -81,7 +72,7 @@ def logout_view(request):
 
 
 # ============================================================
-# DASHBOARD / INICIO
+# DASHBOARD
 # ============================================================
 @login_required
 def inicio_view(request):
@@ -101,8 +92,8 @@ def categorias_list(request):
 def categorias_crear(request):
     if request.method == 'POST':
         Categoria.objects.create(
-            nombre=request.POST['nombre'],
-            descripcion=request.POST['descripcion']
+            nombre=request.POST.get('nombre'),
+            descripcion=request.POST.get('descripcion', '')
         )
         return redirect('categorias_list')
     return render(request, 'categorias/crear.html')
@@ -112,8 +103,8 @@ def categorias_crear(request):
 def categorias_editar(request, id):
     categoria = get_object_or_404(Categoria, id=id)
     if request.method == 'POST':
-        categoria.nombre = request.POST['nombre']
-        categoria.descripcion = request.POST['descripcion']
+        categoria.nombre = request.POST.get('nombre')
+        categoria.descripcion = request.POST.get('descripcion', '')
         categoria.save()
         return redirect('categorias_list')
     return render(request, 'categorias/editar.html', {'categoria': categoria})
@@ -138,9 +129,9 @@ def proveedores_list(request):
 def proveedores_crear(request):
     if request.method == 'POST':
         Proveedor.objects.create(
-            nombre=request.POST['nombre'],
-            email=request.POST['email'],
-            telefono=request.POST['telefono']
+            nombre=request.POST.get('nombre'),
+            email=request.POST.get('email'),
+            telefono=request.POST.get('telefono')
         )
         return redirect('proveedores_list')
     return render(request, 'proveedores/crear.html')
@@ -150,9 +141,9 @@ def proveedores_crear(request):
 def proveedores_editar(request, id):
     proveedor = get_object_or_404(Proveedor, id=id)
     if request.method == 'POST':
-        proveedor.nombre = request.POST['nombre']
-        proveedor.email = request.POST['email']
-        proveedor.telefono = request.POST['telefono']
+        proveedor.nombre = request.POST.get('nombre')
+        proveedor.email = request.POST.get('email')
+        proveedor.telefono = request.POST.get('telefono')
         proveedor.save()
         return redirect('proveedores_list')
     return render(request, 'proveedores/editar.html', {'proveedor': proveedor})
@@ -165,7 +156,7 @@ def proveedores_eliminar(request, id):
 
 
 # ============================================================
-# CRUD PRODUCTOS
+# CRUD PRODUCTOS (🔥 AQUÍ ESTABA EL ERROR)
 # ============================================================
 @login_required
 def productos_list(request):
@@ -180,13 +171,13 @@ def productos_crear(request):
 
     if request.method == 'POST':
         Producto.objects.create(
-            nombre=request.POST['nombre'],
-            sku=request.POST['sku'],
-            descripcion=request.POST['descripcion'],
-            precio=request.POST['precio'],
-            stock_actual=request.POST['stock_actual'],
-            categoria_id=request.POST['categoria'],
-            proveedor_id=request.POST['proveedor'],
+            nombre=request.POST.get('nombre'),
+            sku=request.POST.get('sku'),
+            descripcion=request.POST.get('descripcion', ''),
+            precio=request.POST.get('precio'),
+            stock_actual=request.POST.get('stock_actual'),
+            categoria_id=request.POST.get('categoria'),
+            proveedor_id=request.POST.get('proveedor'),
         )
         return redirect('productos_list')
 
@@ -203,13 +194,13 @@ def productos_editar(request, id):
     proveedores = Proveedor.objects.all()
 
     if request.method == 'POST':
-        producto.nombre = request.POST['nombre']
-        producto.sku = request.POST['sku']
-        producto.descripcion = request.POST['descripcion']
-        producto.precio = request.POST['precio']
-        producto.stock_actual = request.POST['stock_actual']
-        producto.categoria_id = request.POST['categoria']
-        producto.proveedor_id = request.POST['proveedor']
+        producto.nombre = request.POST.get('nombre')
+        producto.sku = request.POST.get('sku')
+        producto.descripcion = request.POST.get('descripcion', '')
+        producto.precio = request.POST.get('precio')
+        producto.stock_actual = request.POST.get('stock_actual')
+        producto.categoria_id = request.POST.get('categoria')
+        producto.proveedor_id = request.POST.get('proveedor')
         producto.save()
         return redirect('productos_list')
 
@@ -240,9 +231,9 @@ def movimientos_crear(request):
     productos = Producto.objects.all()
 
     if request.method == 'POST':
-        producto = Producto.objects.get(id=request.POST['producto'])
-        tipo = request.POST['tipo']
-        cantidad = int(request.POST['cantidad'])
+        producto = Producto.objects.get(id=request.POST.get('producto'))
+        tipo = request.POST.get('tipo')
+        cantidad = int(request.POST.get('cantidad'))
 
         if tipo == 'SALIDA' and cantidad > producto.stock_actual:
             return render(request, 'movimientos/crear.html', {
