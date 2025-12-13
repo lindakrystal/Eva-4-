@@ -1,16 +1,20 @@
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+
+# Cargar variables de entorno
+load_dotenv()
 
 # =========================================================
 # BASE
 # =========================================================
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'CAMBIA-ESTO-POR-TU-SECRET-KEY'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default-key')
 
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 
 # =========================================================
@@ -31,7 +35,7 @@ INSTALLED_APPS = [
     'django_filters',
     'drf_spectacular',
 
-    # Apps internas
+    # App interna
     'inventario',
 ]
 
@@ -58,17 +62,14 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # =========================================================
-# TEMPLATES (✔ CORRECTO)
+# TEMPLATES
 # =========================================================
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-
-        # Ruta directa a templates
         'DIRS': [
             BASE_DIR / 'inventario' / 'templates'
         ],
-
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -120,11 +121,12 @@ STATIC_URL = 'static/'
 
 
 # =========================================================
-# DJANGO REST FRAMEWORK
+# DJANGO REST FRAMEWORK (🔥 CLAVE PARA API DOCS)
 # =========================================================
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
+        # 👉 CAMBIO IMPORTANTE (Session para Swagger)
+        'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
@@ -152,16 +154,10 @@ SPECTACULAR_SETTINGS = {
 
 
 # =========================================================
-# LOGIN / LOGOUT (🔥 CLAVE — NO TOCAR)
+# LOGIN / LOGOUT (CORRECTO)
 # =========================================================
-
-# URL REAL, NO name=
 LOGIN_URL = '/login/'
-
-# Después de iniciar sesión
 LOGIN_REDIRECT_URL = '/inicio/'
-
-# Después de cerrar sesión
 LOGOUT_REDIRECT_URL = '/login/'
 
 
@@ -169,4 +165,3 @@ LOGOUT_REDIRECT_URL = '/login/'
 # DEFAULT
 # =========================================================
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-

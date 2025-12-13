@@ -63,6 +63,15 @@ class MovimientoStockViewSet(viewsets.ModelViewSet):
 
 
 # ============================================================
+# REDIRECCIÓN RAÍZ (LOGIN / DASHBOARD)
+# ============================================================
+def root_redirect(request):
+    if request.user.is_authenticated:
+        return redirect('inicio')
+    return redirect('login')
+
+
+# ============================================================
 # LOGOUT (ÚNICO Y DEFINITIVO)
 # ============================================================
 def logout_view(request):
