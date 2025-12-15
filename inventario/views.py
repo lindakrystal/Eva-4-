@@ -45,6 +45,8 @@ class ProveedorViewSet(viewsets.ModelViewSet):
     search_fields = ['nombre', 'email']
     ordering_fields = ['nombre']
 
+    
+
 
 class ProductoViewSet(viewsets.ModelViewSet):
     queryset = Producto.objects.all()
