@@ -1,20 +1,16 @@
 from pathlib import Path
 import os
-from dotenv import load_dotenv
-
-# Cargar variables de entorno
-load_dotenv()
 
 # =========================================================
 # BASE
 # =========================================================
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default-key')
+SECRET_KEY = 'CAMBIA-ESTO-POR-TU-SECRET-KEY'
 
-DEBUG = os.getenv('DEBUG', 'True') == 'True'
+DEBUG = True
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = []
 
 
 # =========================================================
@@ -121,21 +117,26 @@ STATIC_URL = 'static/'
 
 
 # =========================================================
-# DJANGO REST FRAMEWORK (🔥 CLAVE PARA API DOCS)
+# DJANGO REST FRAMEWORK
 # =========================================================
 REST_FRAMEWORK = {
+    # ✔ Navegador / Swagger
+    # ✔ Postman
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        # 👉 CAMBIO IMPORTANTE (Session para Swagger)
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ],
+
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
     ],
+
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
@@ -144,17 +145,32 @@ REST_FRAMEWORK = {
 
 
 # =========================================================
-# SWAGGER / REDOC
+# SWAGGER / REDOC (🔥 CLAVE PARA TOKEN)
 # =========================================================
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Sistema de Inventario para PYMEs',
     'DESCRIPTION': 'API para gestionar categorías, productos, proveedores y movimientos de stock.',
     'VERSION': '1.0.0',
+
+    # 🔐 Autenticación por Token en Swagger
+    'SECURITY': [
+        {
+            'TokenAuth': []
+        }
+    ],
+    'SECURITY_DEFINITIONS': {
+        'TokenAuth': {
+            'type': 'apiKey',
+            'in': 'header',
+            'name': 'Authorization',
+            'description': 'Usar: Token <tu_token>'
+        }
+    },
 }
 
 
 # =========================================================
-# LOGIN / LOGOUT (CORRECTO)
+# LOGIN / LOGOUT
 # =========================================================
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/inicio/'
